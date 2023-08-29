@@ -3,7 +3,9 @@
 <head>
     <title>Dashboard</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="script.js"></script>
 </head>
+
 <body>
     <div id="header">
         <h1>Dashboard</h1>
@@ -18,14 +20,23 @@
         </ul>
     </div>
     <div id="content">
-        <div class="card">
+        <div class="box">
             <canvas id="memory" width="600" height="250"></canvas>
         </div>
-        <div class="card">
-            <h2 class="card-title">Card 2</h2>
-            <p class="card-content">This is the content of card 2.</p>
+        <div class="box">
+            <p class="box-title">Running containers</p>
+            <table id="c_list">
+                <tr>
+                    <td>ID</td>
+                    <td>Image</td>
+                    <td>Command</td>
+                    <td>Created</td>
+                    <td>Status</td>
+                    <td>Ports</td>
+                    <td>Names</td>
+                </tr>  
+            </table>
         </div>
     </div>
-<script src="script.js"></script>
 </body>
 </html>
