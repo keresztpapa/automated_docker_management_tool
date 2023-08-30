@@ -2,14 +2,12 @@ const express = require('express');
 const path = require('path'); 
 const os = require('os');
 const osUtils = require('os-utils');
+const { exec } = require("child_process");
 
 const port = 8080;
 const app = express();
 const bodyParser = require('body-parser');
-const urlencodedParser = bodyParser.urlencoded({extended: true})
-
-//console.log(usage.user);
-//console.log(usage.system);
+const urlencodedParser = bodyParser.urlencoded({extended: true});
 
 console.log(os.totalmem());
 console.log(os.freemem())
@@ -24,14 +22,37 @@ app.post('/cpu',urlencodedParser, (req, res) => {
 });
 
 app.post('/get_containers',urlencodedParser, (req, res) => {
-    let data_send = JSON.stringify({
-        id:"id_string", image:"image_string", 
-        command:"command_string", created:"created_string", 
-        status:"status_string", ports:"ports_string", names:"names_string"
-        });
+    exec('sudo docker ps', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing ls command: ${error}`);
+            return;
+        }
 
-    console.log(data_send);
-    res.send(data_send);
+        let data_send = [];
+
+        const lines = stdout.split('\n');
+
+        for (let i = 1; i < lines.length; i++) {
+            const columns = lines[i].split(/\s+/);
+            if (columns.length >= 7) {
+                const containerData = {
+                    id: columns[0],
+                    image: columns[1],
+                    command: columns[2],
+                    created: columns[3],
+                    status: columns[4],
+                    ports: columns[5],
+                    names: columns[6]
+                };
+                data_send.push(containerData);
+            }
+        }
+        
+        console.log(data_send);
+        res.send(data_send);
+
+        console.log(`ls command output:\n${stdout}`);
+    });
 });
 
 app.get('/', (req, res) => {
