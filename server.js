@@ -23,6 +23,7 @@ app.post('/cpu',urlencodedParser, (req, res) => {
 
 app.post('/get_containers',urlencodedParser, (req, res) => {
     exec('sudo docker ps', (error, stdout, stderr) => {
+
         if (error) {
             console.error(`Error executing ls command: ${error}`);
             return;
@@ -33,20 +34,24 @@ app.post('/get_containers',urlencodedParser, (req, res) => {
         const lines = stdout.split('\n');
 
         for (let i = 1; i < lines.length; i++) {
-            const columns = lines[i].split(/\s+/);
-            if (columns.length >= 7) {
-                const containerData = {
-                    id: columns[0],
-                    image: columns[1],
-                    command: columns[2],
-                    created: columns[3],
-                    status: columns[4],
-                    ports: columns[5],
-                    names: columns[6]
-                };
-                data_send.push(containerData);
+            const columns = lines[i].split(/\s+/); 
+            let ports = columns[5];
+            if (ports === '') {
+                ports = 'No ports';
             }
+    
+            const containerData = {
+                id: columns[0],
+                image: columns[1],
+                command: columns[2],
+                created: columns[3],
+                status: columns[4],
+                ports: ports,
+                names: columns.slice(6).join(' ')
+            };
+                data_send.push(containerData);
         }
+        
         
         console.log(data_send);
         res.send(data_send);

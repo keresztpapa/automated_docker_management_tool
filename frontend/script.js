@@ -48,15 +48,15 @@ function container_list(){
 
     }).then((data) => {
         let table = document.getElementById("c_list");
-
-        data.forEach((item) => {
-            let row = table.insertRow();
-            for (const property in item) {
-                let cell = row.insertCell();
-                cell.innerHTML = `${item[property]}`;
-            }
-        });
-
+        console.log(data);
+        
+        let row = table.insertRow(); 
+        
+        for (const property in data) {
+            let cell = row.insertCell();
+            cell.innerHTML = `${data[property]}`;
+        }
+    
     }).catch((error) => {
         console.log(error);
     });
